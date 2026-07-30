@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<div class="card shadow">
+
+    <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">
+            Ajouter un produit
+        </h4>
+    </div>
+
+
+    <div class="card-body">
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+
+            <button type="submit" class="btn btn-success">
+                Enregistrer
+            </button>
+
+
+            <a href="{% url 'product_list' %}" class="btn btn-secondary">
+                Retour
+            </a>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

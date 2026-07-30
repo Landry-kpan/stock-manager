@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+    <div class="col-md-6">
+
+        <div class="card shadow">
+
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">
+                    Supprimer une catégorie
+                </h4>
+            </div>
+
+            <div class="card-body">
+
+                <p>
+                    Voulez-vous vraiment supprimer la catégorie :
+                    <strong>{{ category.name }}</strong> ?
+                </p>
+
+                <p class="text-muted">
+                    Cette action est irréversible.
+                </p>
+
+                <form method="post">
+
+                    {% csrf_token %}
+
+                    <button type="submit" class="btn btn-danger">
+                        Oui, supprimer
+                    </button>
+
+                    <a href="{% url 'category_list' %}"
+                       class="btn btn-secondary">
+                        Annuler
+                    </a>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

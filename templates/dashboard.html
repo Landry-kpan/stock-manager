@@ -1,0 +1,464 @@
+{% extends "base.html" %}
+
+{% block title %}
+Tableau de bord - Stock Manager
+{% endblock %}
+
+{% block content %}
+
+<!-- =========================
+     EN-TÊTE
+========================== -->
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+<div>
+
+    <h1 class="fw-bold mb-1">
+        Tableau de bord
+    </h1>
+
+    <p class="text-muted mb-0">
+        Vue générale de votre stock
+    </p>
+
+</div>
+
+
+<a
+    href="{% url 'movement_create' %}"
+    class="btn btn-success"
+>
+    + Nouveau mouvement
+</a>
+
+
+</div>
+
+<!-- =========================
+     STATISTIQUES
+========================== -->
+
+<div class="row g-4 mb-4">
+
+
+<!-- PRODUITS -->
+
+<div class="col-md-6 col-xl-3">
+
+    <div class="card shadow-sm border-0 h-100">
+
+        <div class="card-body">
+
+            <p class="text-muted mb-1">
+                📦 Produits
+            </p>
+
+            <h2 class="fw-bold mb-2">
+                {{ products_count }}
+            </h2>
+
+            <a
+                href="{% url 'product_list' %}"
+                class="text-decoration-none"
+            >
+                Voir les produits →
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- CATÉGORIES -->
+
+<div class="col-md-6 col-xl-3">
+
+    <div class="card shadow-sm border-0 h-100">
+
+        <div class="card-body">
+
+            <p class="text-muted mb-1">
+                📁 Catégories
+            </p>
+
+            <h2 class="fw-bold mb-2">
+                {{ categories_count }}
+            </h2>
+
+            <a
+                href="{% url 'category_list' %}"
+                class="text-decoration-none"
+            >
+                Voir les catégories →
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- STOCK TOTAL -->
+
+<div class="col-md-6 col-xl-3">
+
+    <div class="card shadow-sm border-0 h-100">
+
+        <div class="card-body">
+
+            <p class="text-muted mb-1">
+                📊 Stock total
+            </p>
+
+            <h2 class="fw-bold mb-2">
+                {{ stock_total }}
+            </h2>
+
+            <a
+                href="{% url 'movement_list' %}"
+                class="text-decoration-none"
+            >
+                Voir les mouvements →
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- RUPTURE -->
+
+<div class="col-md-6 col-xl-3">
+
+    <div class="card shadow-sm border-0 h-100">
+
+        <div class="card-body">
+
+            <p class="text-muted mb-1">
+                🚫 Ruptures
+            </p>
+
+            <h2 class="fw-bold text-danger mb-2">
+                {{ out_of_stock_products|length }}
+            </h2>
+
+            <span class="text-muted">
+                Produits sans stock
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+</div>
+
+<!-- =========================
+     CONTENU PRINCIPAL
+========================== -->
+
+<div class="row g-4">
+
+
+<!-- =========================
+     DERNIERS MOUVEMENTS
+========================== -->
+
+<div class="col-lg-8">
+
+    <div class="card shadow-sm border-0">
+
+
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+
+            <h5 class="mb-0">
+                🔄 Derniers mouvements
+            </h5>
+
+            <a
+                href="{% url 'movement_list' %}"
+                class="btn btn-sm btn-outline-dark"
+            >
+                Voir tout
+            </a>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle mb-0">
+
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>
+                                Produit
+                            </th>
+
+                            <th>
+                                Type
+                            </th>
+
+                            <th>
+                                Quantité
+                            </th>
+
+                            <th>
+                                Date
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for movement in recent_movements %}
+
+                        <tr>
+
+
+                            <td>
+
+                                <strong>
+                                    {{ movement.product.name }}
+                                </strong>
+
+                            </td>
+
+
+                            <td>
+
+                                {% if movement.movement_type == "IN" %}
+
+                                    <span class="badge bg-success">
+                                        Entrée
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-danger">
+                                        Sortie
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                <strong>
+                                    {{ movement.quantity }}
+                                </strong>
+
+                            </td>
+
+
+                            <td>
+
+                                <small class="text-muted">
+                                    {{ movement.date|date:"d/m/Y H:i" }}
+                                </small>
+
+                            </td>
+
+
+                        </tr>
+
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td
+                                colspan="4"
+                                class="text-center py-5"
+                            >
+
+                                <div class="fs-1 mb-2">
+                                    📦
+                                </div>
+
+                                <p class="text-muted mb-0">
+                                    Aucun mouvement enregistré.
+                                </p>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     ALERTES STOCK
+========================== -->
+
+<div class="col-lg-4">
+
+
+    <!-- STOCK FAIBLE -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+
+        <div class="card-header bg-white">
+
+            <h5 class="mb-0">
+                ⚠️ Stock faible
+            </h5>
+
+        </div>
+
+
+        <div class="card-body">
+
+            {% for product in low_stock_products %}
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+
+
+                <div>
+
+                    <strong>
+                        {{ product.name }}
+                    </strong>
+
+                    <br>
+
+                    <small class="text-muted">
+
+                        {% if product.category %}
+                            {{ product.category }}
+                        {% else %}
+                            Sans catégorie
+                        {% endif %}
+
+                    </small>
+
+                </div>
+
+
+                <span class="badge bg-warning text-dark">
+
+                    {{ product.quantity }}
+
+                </span>
+
+
+            </div>
+
+
+            {% empty %}
+
+            <p class="text-success mb-0">
+                ✓ Aucun produit en stock faible.
+            </p>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+
+
+    <!-- RUPTURES -->
+
+    <div class="card shadow-sm border-0">
+
+
+        <div class="card-header bg-white">
+
+            <h5 class="mb-0">
+                🚫 Produits en rupture
+            </h5>
+
+        </div>
+
+
+        <div class="card-body">
+
+            {% for product in out_of_stock_products %}
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+
+
+                <div>
+
+                    <strong>
+                        {{ product.name }}
+                    </strong>
+
+                    <br>
+
+                    <small class="text-muted">
+
+                        {% if product.category %}
+                            {{ product.category }}
+                        {% else %}
+                            Sans catégorie
+                        {% endif %}
+
+                    </small>
+
+                </div>
+
+
+                <span class="badge bg-danger">
+                    Rupture
+                </span>
+
+
+            </div>
+
+
+            {% empty %}
+
+            <p class="text-success mb-0">
+                ✓ Aucun produit en rupture.
+            </p>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+</div>
+
+{% endblock %}

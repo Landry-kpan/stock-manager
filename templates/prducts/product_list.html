@@ -1,0 +1,372 @@
+{% extends "base.html" %}
+
+{% block title %}
+Produits - Stock Manager
+{% endblock %}
+
+{% block content %}
+
+<!-- =========================
+     EN-TÊTE DE LA PAGE
+========================== -->
+
+<div class="d-flex justify-content-between align-items-start mb-4">
+
+
+<div>
+
+    <h1 class="fw-bold mb-1">
+        Produits
+    </h1>
+
+    <p class="text-muted mb-0">
+        Gérez vos produits et consultez leur niveau de stock.
+    </p>
+
+
+    <!-- =========================
+         RECHERCHE
+    ========================== -->
+
+    <form method="get" class="mt-3">
+
+        <div class="input-group">
+
+            <input
+                type="text"
+                name="search"
+                class="form-control"
+                placeholder="Rechercher un produit ou une catégorie..."
+                value="{{ search }}"
+            >
+
+            <button
+                type="submit"
+                class="btn btn-dark"
+            >
+                🔎 Rechercher
+            </button>
+
+
+            {% if search %}
+
+                <a
+                    href="{% url 'product_list' %}"
+                    class="btn btn-outline-secondary"
+                >
+                    Réinitialiser
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </form>
+
+</div>
+
+
+<!-- =========================
+     AJOUTER UN PRODUIT
+========================== -->
+
+<div>
+
+    <a
+        href="{% url 'product_create' %}"
+        class="btn btn-success"
+    >
+        + Ajouter un produit
+    </a>
+
+</div>
+
+
+</div>
+
+<!-- =========================
+     TABLEAU DES PRODUITS
+========================== -->
+
+<div class="card shadow-sm border-0">
+
+
+<!-- EN-TÊTE DU TABLEAU -->
+
+<div class="card-header bg-white">
+
+    <h5 class="mb-0">
+        Liste des produits
+    </h5>
+
+</div>
+
+
+<!-- CONTENU -->
+
+<div class="card-body p-0">
+
+    <div class="table-responsive">
+
+        <table class="table table-hover align-middle mb-0">
+
+
+            <!-- COLONNES -->
+
+            <thead class="table-light">
+
+                <tr>
+
+                    <th>
+                        Produit
+                    </th>
+
+                    <th>
+                        Catégorie
+                    </th>
+
+                    <th>
+                        Prix
+                    </th>
+
+                    <th>
+                        Stock
+                    </th>
+
+                    <th>
+                        État
+                    </th>
+
+                    <th class="text-end">
+                        Actions
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <!-- PRODUITS -->
+
+            <tbody>
+
+                {% for product in products %}
+
+                <tr>
+
+
+                    <!-- =========================
+                         PRODUIT
+                    ========================== -->
+
+                    <td>
+
+                        <strong>
+                            {{ product.name }}
+                        </strong>
+
+
+                        {% if product.description %}
+
+                            <br>
+
+                            <small class="text-muted">
+                                {{ product.description|truncatechars:50 }}
+                            </small>
+
+                        {% endif %}
+
+                    </td>
+
+
+
+                    <!-- =========================
+                         CATÉGORIE
+                    ========================== -->
+
+                    <td>
+
+                        {% if product.category %}
+
+                            <span class="badge bg-secondary">
+                                {{ product.category }}
+                            </span>
+
+                        {% else %}
+
+                            <span class="text-muted">
+                                —
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+
+                    <!-- =========================
+                         PRIX
+                    ========================== -->
+
+                    <td>
+
+                        <strong>
+                            {{ product.price }}
+                        </strong>
+
+                    </td>
+
+
+
+                    <!-- =========================
+                         STOCK
+                    ========================== -->
+
+                    <td>
+
+                        <strong
+                            class="
+                                {% if product.quantity == 0 %}
+                                    text-danger
+                                {% elif product.quantity <= 5 %}
+                                    text-warning
+                                {% else %}
+                                    text-success
+                                {% endif %}
+                            "
+                        >
+
+                            {{ product.quantity }}
+
+                        </strong>
+
+                    </td>
+
+
+
+                    <!-- =========================
+                         ÉTAT DU STOCK
+                    ========================== -->
+
+                    <td>
+
+                        {% if product.quantity == 0 %}
+
+                            <span class="badge bg-danger">
+                                Rupture
+                            </span>
+
+                        {% elif product.quantity <= 5 %}
+
+                            <span class="badge bg-warning text-dark">
+                                Stock faible
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-success">
+                                Disponible
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+
+                    <!-- =========================
+                         ACTIONS
+                    ========================== -->
+
+                    <td class="text-end">
+
+                        <a
+                            href="{% url 'product_update' product.id %}"
+                            class="btn btn-sm btn-warning"
+                        >
+                            Modifier
+                        </a>
+
+
+                        <a
+                            href="{% url 'product_delete' product.id %}"
+                            class="btn btn-sm btn-danger"
+                        >
+                            Supprimer
+                        </a>
+
+                    </td>
+
+
+                </tr>
+
+
+                <!-- =========================
+                     AUCUN PRODUIT
+                ========================== -->
+
+                {% empty %}
+
+                <tr>
+
+                    <td
+                        colspan="6"
+                        class="text-center py-5"
+                    >
+
+                        <div class="fs-1 mb-3">
+                            📦
+                        </div>
+
+
+                        <h5>
+                            Aucun produit
+                        </h5>
+
+
+                        {% if search %}
+
+                            <p class="text-muted">
+                                Aucun produit ne correspond à votre recherche.
+                            </p>
+
+                            <a
+                                href="{% url 'product_list' %}"
+                                class="btn btn-outline-secondary"
+                            >
+                                Réinitialiser la recherche
+                            </a>
+
+                        {% else %}
+
+                            <p class="text-muted">
+                                Commencez par ajouter votre premier produit.
+                            </p>
+
+                            <a
+                                href="{% url 'product_create' %}"
+                                class="btn btn-success"
+                            >
+                                + Ajouter un produit
+                            </a>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+</div>
+
+{% endblock %}
